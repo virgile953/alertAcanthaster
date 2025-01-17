@@ -1,27 +1,23 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { neon } from "@neondatabase/serverless";
 
 export async function saveSighting(data: {
-	latitude: number;
-	longitude: number;
-	count: number;
-	certainty: number;
+  latitude: number;
+  longitude: number;
+  count: number;
+  certainty: number;
 }) {
-	try {
-		const sighting = await prisma.sighting.create({
-			data: {
-				latitude: data.latitude,
-				longitude: data.longitude,
-				count: data.count,
-				certainty: data.certainty,
-			},
-		});
-		return { success: true, data: sighting };
-	} catch (error) {
-		console.error("Failed to save sighting:", error);
-		return { success: false, error: "Failed to save sighting" };
-	}
+  try {
+    const sql = neon(process.env.POSTGRES_URL!);
+    const sighting = await sql`
+      INSERT INTO "Sighting" (latitude, longitude, count, certainty, "createdAt")
+      VALUES (${data.latitude}, ${data.longitude}, ${data.count}, ${data.certainty}, NOW())
+      RETURNING *
+    `;
+    return { success: true, data: sighting[0] };
+  } catch (error) {
+    console.error("Failed to save sighting:", error);
+    return { success: false, error: "Failed to save sighting" };
+  }
 }

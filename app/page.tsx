@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
-
 const MapComponent = dynamic(() => import("./components/MapComponent"), {
 	loading: () => <p>Loading Map...</p>,
 	ssr: false,
@@ -14,6 +13,15 @@ export default function Home() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		// Set CSS variable for viewport height on mount and resize
+		const setVH = () => {
+			const vh = window.innerHeight * 0.01;
+			document.documentElement.style.setProperty('--vh', `${vh}px`);
+		};
+
+		setVH();
+		window.addEventListener('resize', setVH);
+
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
 				(pos) => {
@@ -26,6 +34,8 @@ export default function Home() {
 				}
 			);
 		}
+
+		return () => window.removeEventListener('resize', setVH);
 	}, []);
 
 	if (isLoading) {
@@ -33,18 +43,21 @@ export default function Home() {
 	}
 
 	return (
-		<div style={{ display: "flex", height: "100vh" }}>
+		<div className="flex flex-col md:flex-row min-h-screen">
 			<Navbar />
-			<main
-				style={{
-					flex: 1,
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					padding: "20px",
-				}}
-			>
-				<MapComponent position={position} />
+			<main className="
+				flex-1
+				flex
+				flex-col
+				p-2
+				md:p-4
+				md:ml-[200px]
+				mt-[60px]
+				md:mt-0
+			">
+				<div className="flex-1 w-full">
+					<MapComponent position={position} />
+				</div>
 			</main>
 		</div>
 	);

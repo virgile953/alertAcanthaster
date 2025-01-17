@@ -1,12 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { MapContainer, TileLayer, useMapEvents, Popup } from "react-leaflet";
+import { useState, useEffect } from "react";
+import {
+	MapContainer,
+	TileLayer,
+	Marker,
+	Popup,
+	useMapEvents,
+} from "react-leaflet";
 import { LatLng } from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { getAllSightings } from "../actions/getData";
 import { saveSighting } from "../actions/saveSighting";
+import { Sighting } from "@/types";
+import 'leaflet/dist/leaflet.css'
 
-function ClickHandler() {
+
+function ClickHandler({ onSightingAdded }: { onSightingAdded: () => void }) {
 	const [clickPos, setClickPos] = useState<LatLng | null>(null);
 	const [count, setCount] = useState("");
 	const [certainty, setCertainty] = useState("");
@@ -16,6 +25,22 @@ function ClickHandler() {
 			setClickPos(e.latlng);
 		},
 	});
+
+	const handleSubmit = async () => {
+		const result = await saveSighting({
+			latitude: clickPos!.lat,
+			longitude: clickPos!.lng,
+			count: Number(count),
+			certainty: Number(certainty),
+		});
+
+		if (result.success) {
+			setClickPos(null);
+			setCount("");
+			setCertainty("");
+			onSightingAdded(); // Trigger refresh
+		}
+	};
 
 	return clickPos ? (
 		<Popup position={clickPos}>
@@ -42,27 +67,8 @@ function ClickHandler() {
 					<span>{certainty}%</span>
 				</div>
 				<button
-					onClick={async () => {
-						const result = await saveSighting({
-							latitude: clickPos.lat,
-							longitude: clickPos.lng,
-							count: Number(count),
-							certainty: Number(certainty),
-						});
-						if (result.success) {
-							setClickPos(null);
-							setCount("");
-							setCertainty("");
-						}
-					}}
-					style={{
-						width: "100%",
-						padding: "5px",
-						backgroundColor: "#007bff",
-						color: "white",
-						border: "none",
-						borderRadius: "4px",
-					}}
+					onClick={handleSubmit}
+					className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
 				>
 					Submit
 				</button>
@@ -76,19 +82,43 @@ export default function MapComponent({
 }: {
 	position: [number, number];
 }) {
+	const [sightings, setSightings] = useState<Sighting[]>([]);
+	const [refresh, setRefresh] = useState(0);
+
+	useEffect(() => {
+		const loadSightings = async () => {
+			const data = await getAllSightings();
+			setSightings(data as Sighting[]);
+		};
+		loadSightings();
+	}, [refresh]); // Reload when refresh changes
+
+	const handleSightingAdded = () => {
+		setRefresh((prev) => prev + 1); // Trigger reload
+	};
+
 	return (
 		<MapContainer
 			center={position}
 			zoom={13}
-			style={{
-				height: "100%",
-				width: "100%",
-				border: "2px solid #ccc",
-				borderRadius: "8px",
-			}}
+			className="w-full h-full rounded-lg border-2 border-gray-200 dark:border-gray-700"
 		>
 			<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-			<ClickHandler />
+			{sightings.map((sighting) => (
+				<Marker
+					key={sighting.id}
+					position={[sighting.latitude, sighting.longitude]}
+				>
+					<Popup>
+						<div className="p-2">
+							<p>Count: {sighting.count}</p>
+							<p>Certainty: {sighting.certainty}%</p>
+							<p>{new Date(sighting.createdAt).toLocaleString()}</p>
+						</div>
+					</Popup>
+				</Marker>
+			))}
+			<ClickHandler onSightingAdded={handleSightingAdded} />
 		</MapContainer>
 	);
 }
