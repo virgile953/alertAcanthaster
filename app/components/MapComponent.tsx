@@ -12,8 +12,7 @@ import { LatLng } from "leaflet";
 import { getAllSightings } from "../actions/getData";
 import { saveSighting } from "../actions/saveSighting";
 import { Sighting } from "@/types";
-import 'leaflet/dist/leaflet.css'
-
+import 'leaflet/dist/leaflet.css';
 
 function ClickHandler({ onSightingAdded }: { onSightingAdded: () => void }) {
 	const [clickPos, setClickPos] = useState<LatLng | null>(null);
@@ -98,27 +97,30 @@ export default function MapComponent({
 	};
 
 	return (
-		<MapContainer
-			center={position}
-			zoom={13}
-			className="w-full h-full rounded-lg border-2 border-gray-200 dark:border-gray-700"
-		>
-			<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-			{sightings.map((sighting) => (
-				<Marker
-					key={sighting.id}
-					position={[sighting.latitude, sighting.longitude]}
-				>
-					<Popup>
-						<div className="p-2">
-							<p>Count: {sighting.count}</p>
-							<p>Certainty: {sighting.certainty}%</p>
-							<p>{new Date(sighting.createdAt).toLocaleString()}</p>
-						</div>
-					</Popup>
-				</Marker>
-			))}
-			<ClickHandler onSightingAdded={handleSightingAdded} />
-		</MapContainer>
+		<div className="h-[calc(100vh-100px)] md:h-full w-full">
+			<MapContainer
+				center={position}
+				zoom={13}
+				className="w-full h-full rounded-lg border-2 border-gray-200 dark:border-gray-700"
+				style={{ height: '100%' }}
+			>
+				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+				{sightings.map((sighting) => (
+					<Marker
+						key={sighting.id}
+						position={[sighting.latitude, sighting.longitude]}
+					>
+						<Popup>
+							<div className="p-2">
+								<p>Count: {sighting.count}</p>
+								<p>Certainty: {sighting.certainty}%</p>
+								<p>{new Date(sighting.createdAt).toLocaleString('en-GB')}</p>
+							</div>
+						</Popup>
+					</Marker>
+				))}
+				<ClickHandler onSightingAdded={handleSightingAdded} />
+			</MapContainer>
+		</div>
 	);
 }
