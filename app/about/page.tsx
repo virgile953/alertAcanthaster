@@ -4,9 +4,9 @@ import Navbar from "../components/Navbar";
 
 export default function About() {
   return (
-    <div className="min-h-screen flex md:flex-row flex-col bg-white dark:bg-gray-900">
+    <div className="flex md:flex-row flex-col min-h-[calc(100vh-64px)]">
       <Navbar />
-      <main className="flex-1 p-4 md:ml-[200px] mt-[70px] md:mt-0">
+      <main className="flex-1 p-4 pb-16 md:ml-[200px] mt-[70px] md:mt-0 overflow-y-auto">
         <h1 className="
           text-[clamp(1.5rem,5vw,2.5rem)]
           text-blue-900 dark:text-blue-100

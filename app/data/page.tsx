@@ -41,90 +41,103 @@ export default function Data() {
 	};
 
 	return (
-		<div className="min-h-screen flex md:flex-row flex-col">
+		<div className="flex md:flex-row flex-col min-h-[calc(100vh-64px)]">
 			<Navbar />
-			<main className="flex-1 p-4 md:ml-[200px] mt-[80px] md:mt-0">
+			<main className="flex-1 p-4 pb-16 md:ml-[200px] mt-[80px] md:mt-0 overflow-y-auto">
 				{loading ? (
 					<p>Loading data...</p>
 				) : (
-					<div
-						style={{
-							overflowX: "auto", // For table horizontal scroll on mobile
-							width: "100%",
-						}}
-					>
-						<table style={{ width: "100%", borderCollapse: "collapse" }}>
-							<thead>
-								<tr>
-									<th
-										style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
-									>
-										Date
-									</th>
-									<th
-										style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
-									>
-										Latitude
-									</th>
-									<th
-										style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
-									>
-										Longitude
-									</th>
-									<th
-										style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
-									>
-										Count
-									</th>
-									<th
-										style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
-									>
-										Certainty
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{sightings.map((sighting) => (
-									<tr key={sighting.id}>
-										<td
-											style={{ padding: "8px", borderBottom: "1px solid #ddd" }}
+					<div className="flex flex-col ">
+						<div className="flex-1 overflow-x-auto mb-4">
+							<table style={{ width: "100%", borderCollapse: "collapse" }}>
+								<thead>
+									<tr>
+										<th
+											style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
 										>
-											{new Date(sighting.createdAt).toLocaleString()}
-										</td>
-										<td
-											style={{ padding: "8px", borderBottom: "1px solid #ddd" }}
+											Date
+										</th>
+										<th
+											style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
 										>
-											{sighting.latitude}
-										</td>
-										<td
-											style={{ padding: "8px", borderBottom: "1px solid #ddd" }}
+											Latitude
+										</th>
+										<th
+											style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
 										>
-											{sighting.longitude}
-										</td>
-										<td
-											style={{ padding: "8px", borderBottom: "1px solid #ddd" }}
+											Longitude
+										</th>
+										<th
+											style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
 										>
-											{sighting.count}
-										</td>
-										<td
-											style={{ padding: "8px", borderBottom: "1px solid #ddd" }}
+											Count
+										</th>
+										<th
+											style={{ padding: "8px", borderBottom: "2px solid #ddd" }}
 										>
-											{sighting.certainty}%
-										</td>
+											Certainty
+										</th>
 									</tr>
-								))}
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									{sightings.map((sighting) => (
+										<tr key={sighting.id}>
+											<td
+												style={{
+													padding: "8px",
+													borderBottom: "1px solid #ddd",
+												}}
+												title={new Date(sighting.createdAt).toLocaleString('en-GB')}
+											>
+												{new Date(sighting.createdAt).toLocaleDateString('en-GB')}
+											</td>
+											<td
+												style={{
+													padding: "8px",
+													borderBottom: "1px solid #ddd",
+												}}
+											>
+												{sighting.latitude.toFixed(7)}
+											</td>
+											<td
+												style={{
+													padding: "8px",
+													borderBottom: "1px solid #ddd",
+												}}
+											>
+												{sighting.longitude.toFixed(7)}
+											</td>
+											<td
+												style={{
+													padding: "8px",
+													borderBottom: "1px solid #ddd",
+												}}
+											>
+												{sighting.count}
+											</td>
+											<td
+												style={{
+													padding: "8px",
+													borderBottom: "1px solid #ddd",
+												}}
+											>
+												{sighting.certainty}%
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						<div className="mb-2">
+							<button
+								onClick={exportToCSV}
+								className="px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+							>
+								Export to CSV
+							</button>
+						</div>
 					</div>
 				)}
-				<div style={{ marginBottom: "20px" }}>
-					<button
-						onClick={exportToCSV}
-						className="mt-5 px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-					>
-						Export to CSV
-					</button>
-				</div>
 			</main>
 		</div>
 	);

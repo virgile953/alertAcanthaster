@@ -96,8 +96,8 @@ export default function MapComponent({
 		setRefresh((prev) => prev + 1); // Trigger reload
 	};
 
-	return (
-		<div className="h-[calc(100vh-100px)] md:h-full w-full">
+	return (//min-h-[calc(100vh-64px)]
+		<div className="h-[calc(79vh)] md:h-[calc(90vh)] w-full">
 			<MapContainer
 				center={position}
 				zoom={13}
