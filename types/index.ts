@@ -5,8 +5,9 @@ export interface Sighting {
   count: number;
   certainty: number;
   createdAt: string;
+  thumbsup: number;
+  thumbsdown: number;
 }
-
 export type SightingInput = Omit<Sighting, 'id' | 'createdAt'>;
 
 export interface ApiResponse {

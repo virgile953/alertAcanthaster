@@ -8,10 +8,12 @@ datasource db {
 }
 
 model Sighting {
-  id        Int      @id @default(autoincrement())
-  latitude  Float
-  longitude Float
-  count     Int
-  certainty Int
-  createdAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  latitude      Float
+  longitude     Float
+  count         Int
+  thumbsup      Int
+  thumbsup      Int
+  certainty     Int
+  createdAt     DateTime @default(now())
 }

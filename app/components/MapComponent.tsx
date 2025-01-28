@@ -13,6 +13,7 @@ import { getAllSightings } from "../actions/getData";
 import { saveSighting } from "../actions/saveSighting";
 import { Sighting } from "@/types";
 import 'leaflet/dist/leaflet.css';
+import MapPopup from "./MapPopup";
 
 function ClickHandler({ onSightingAdded }: { onSightingAdded: () => void }) {
 	const [clickPos, setClickPos] = useState<LatLng | null>(null);
@@ -31,6 +32,8 @@ function ClickHandler({ onSightingAdded }: { onSightingAdded: () => void }) {
 			longitude: clickPos!.lng,
 			count: Number(count),
 			certainty: Number(certainty),
+			thumbsup: Number(1),
+			thumbsdown: Number(0),
 		});
 
 		if (result.success) {
@@ -110,13 +113,7 @@ export default function MapComponent({
 						key={sighting.id}
 						position={[sighting.latitude, sighting.longitude]}
 					>
-						<Popup>
-							<div className="p-2">
-								<p>Count: {sighting.count}</p>
-								<p>Certainty: {sighting.certainty}%</p>
-								<p>{new Date(sighting.createdAt).toLocaleString('en-GB')}</p>
-							</div>
-						</Popup>
+						{MapPopup(sighting)}
 					</Marker>
 				))}
 				<ClickHandler onSightingAdded={handleSightingAdded} />
@@ -124,3 +121,4 @@ export default function MapComponent({
 		</div>
 	);
 }
+
