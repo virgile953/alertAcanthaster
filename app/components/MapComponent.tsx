@@ -113,7 +113,7 @@ export default function MapComponent({
 						key={sighting.id}
 						position={[sighting.latitude, sighting.longitude]}
 					>
-						{MapPopup(sighting)}
+						<MapPopup sighting={sighting} />
 					</Marker>
 				))}
 				<ClickHandler onSightingAdded={handleSightingAdded} />

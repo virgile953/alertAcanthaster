@@ -6,15 +6,17 @@ import { neon } from "@neondatabase/serverless";
 async function createTableIfNotExists() {
 	const sql = neon(process.env.POSTGRES_URL!);
 	await sql`
-    CREATE TABLE IF NOT EXISTS "Sighting" (
-      id SERIAL PRIMARY KEY,
-      latitude DOUBLE PRECISION NOT NULL,
-      longitude DOUBLE PRECISION NOT NULL,
-      count INTEGER NOT NULL,
-      certainty INTEGER NOT NULL,
-      "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    )
-  `;
+		CREATE TABLE IF NOT EXISTS "Sighting" (
+			id SERIAL PRIMARY KEY,
+			latitude DOUBLE PRECISION NOT NULL,
+			longitude DOUBLE PRECISION NOT NULL,
+			count INTEGER NOT NULL,
+			certainty INTEGER NOT NULL,
+			thumbsup INTEGER DEFAULT 0,
+			thumbsdown INTEGER DEFAULT 0,
+			"createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		)
+	`;
 }
 
 export async function getAllSightings(): Promise<Sighting[]> {

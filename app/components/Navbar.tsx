@@ -21,11 +21,11 @@ export default function Navbar() {
 			<Link href="/" className={ClassName}>
 				Home
 			</Link>
-			<Link href="/about" className={ClassName}>
-				About
-			</Link>
 			<Link href="/data" className={ClassName}>
 				Data
+			</Link>
+			<Link href="/about" className={ClassName}>
+				About
 			</Link>
 		</nav>
 	);
