@@ -8,7 +8,6 @@ import { getUser } from "../actions/auth";
 export default function Settings() {
 	const [notificationPreference, setNotificationPreference] =
 		useState<number>(0);
-	const [location, setLocation] = useState<[number, number] | null>(null);
 	const [manualLat, setManualLat] = useState("");
 	const [manualLng, setManualLng] = useState("");
 	const [error, setError] = useState("");
@@ -22,16 +21,16 @@ export default function Settings() {
 			if (user) {
 				setNotificationPreference(Number(user.alert) || 0);
 				setAlertFrequency(Number(user.alert_frequency) || 24);
-				if (user.alert_time_sent && user.alert_time_sent !== '') {
-					setLastNotificationSent(new Date(user.alert_time_sent as string).toLocaleString());
+				if (user.alert_time_sent && user.alert_time_sent !== "") {
+					setLastNotificationSent(
+						new Date(user.alert_time_sent as string).toLocaleString()
+					);
 				}
 				const savedLocation = user.location as string;
 				console.log("Saved location:", savedLocation);
 				if (savedLocation) {
 					setManualLat(savedLocation.split(";")[0]);
 					setManualLng(savedLocation.split(";")[1]);
-					const [lat, lng] = savedLocation.split(";").map(Number);
-					setLocation([lat, lng]);
 				}
 			}
 		};
@@ -42,7 +41,6 @@ export default function Settings() {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
 				(pos) => {
-					setLocation([pos.coords.latitude, pos.coords.longitude]);
 					setManualLat(pos.coords.latitude.toString());
 					setManualLng(pos.coords.longitude.toString());
 				},
@@ -53,17 +51,6 @@ export default function Settings() {
 		}
 	};
 
-	const handleManualCoords = () => {
-		const lat = parseFloat(manualLat);
-		const lng = parseFloat(manualLng);
-		if (isNaN(lat) || isNaN(lng)) {
-			setError("Invalid coordinates");
-			return;
-		}
-		setLocation([lat, lng]);
-		setError("");
-	};
-
 	const handleSave = async () => {
 		if (!location) {
 			setError("Please set a location");
@@ -72,7 +59,7 @@ export default function Settings() {
 
 		const result = await updateUserSettings(
 			notificationPreference,
-			`${location[0]};${location[1]}`,
+			`${manualLat};${manualLng}`,
 			alertFrequency
 		);
 
@@ -84,15 +71,15 @@ export default function Settings() {
 			if (user) {
 				setNotificationPreference(Number(user.alert) || 0);
 				setAlertFrequency(Number(user.alert_frequency) || 24);
-				if (user.alert_time_sent && user.alert_time_sent !== '') {
-					setLastNotificationSent(new Date(user.alert_time_sent as string).toLocaleString());
+				if (user.alert_time_sent && user.alert_time_sent !== "") {
+					setLastNotificationSent(
+						new Date(user.alert_time_sent as string).toLocaleString()
+					);
 				}
 				const savedLocation = user.location as string;
 				if (savedLocation) {
 					setManualLat(savedLocation.split(";")[0]);
 					setManualLng(savedLocation.split(";")[1]);
-					const [lat, lng] = savedLocation.split(";").map(Number);
-					setLocation([lat, lng]);
 				}
 			}
 		} else {
@@ -126,7 +113,9 @@ export default function Settings() {
 						</label>
 						<select
 							value={notificationPreference}
-							onChange={(e) => setNotificationPreference(Number(e.target.value))}
+							onChange={(e) =>
+								setNotificationPreference(Number(e.target.value))
+							}
 							className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
 						>
 							<option value={0}>No notifications</option>
@@ -135,29 +124,38 @@ export default function Settings() {
 							<option value={3}>Email and push notifications</option>
 						</select>
 					</div>
+					<div className="flex flex-row justify-between gap-4">
+						<div className="mb-2 w-full">
+							<label className=" text-gray-700 dark:text-gray-200 mb-2">
+								Latitude
+							</label>
+							<input
+								type="text"
+								value={manualLat}
+								onChange={(e) => setManualLat(e.target.value)}
+								className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+							/>
+						</div>
 
-					<div className="mb-4">
-						<label className="block text-gray-700 dark:text-gray-200 mb-2">
-							Latitude
-						</label>
-						<input
-							type="text"
-							value={manualLat}
-							onChange={(e) => setManualLat(e.target.value)}
-							className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-						/>
+						<div className="mb-2 w-full">
+							<label className=" text-gray-700 dark:text-gray-200 mb-2">
+								Longitude
+							</label>
+							<input
+								type="text"
+								value={manualLng}
+								onChange={(e) => setManualLng(e.target.value)}
+								className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+							/>
+						</div>
 					</div>
-
-					<div className="mb-6">
-						<label className="block text-gray-700 dark:text-gray-200 mb-2">
-							Longitude
-						</label>
-						<input
-							type="text"
-							value={manualLng}
-							onChange={(e) => setManualLng(e.target.value)}
-							className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-						/>
+					<div className="flex gap-4 mb-6">
+						<button
+							onClick={handleDeviceLocation}
+							className="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+						>
+							Use Device Location
+						</button>
 					</div>
 
 					<div className="mb-6">
@@ -184,21 +182,6 @@ export default function Settings() {
 							</div>
 						</div>
 					)}
-
-					<div className="flex gap-4 mb-6">
-						<button
-							onClick={handleDeviceLocation}
-							className="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-						>
-							Use Device Location
-						</button>
-						<button
-							onClick={handleManualCoords}
-							className="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-						>
-							Set Coordinates
-						</button>
-					</div>
 
 					<button
 						onClick={handleSave}

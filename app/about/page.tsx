@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 
 export default function About() {
 	return (
-		<div className="flex md:flex-row flex-col min-h-[calc(100vh-64px)]">
+		<div className="flex md:flex-row flex-col min-h-[calc(100vh-89px)] md:min-h-[calc(100vh-64px)]">
 			<Navbar />
 			<main className="flex-1 p-4 pb-16 md:ml-[200px] mt-[70px] md:mt-0 overflow-y-auto">
 				<h1

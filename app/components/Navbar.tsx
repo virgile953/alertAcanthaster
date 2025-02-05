@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getUser } from "../actions/auth";
+import { getUser, logout } from "../actions/auth";
 
 export default function Navbar() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,7 +19,7 @@ export default function Navbar() {
 		"bg-white dark:bg-gray-700 px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-center w-full";
 
 	const handleLogout = async () => {
-		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		await logout();
 		window.location.href = "/login";
 	};
 
@@ -29,9 +29,9 @@ export default function Navbar() {
 				<Link href="/" className={ClassName}>
 					Home
 				</Link>
-				<Link prefetch href="/data" className={ClassName}>
+				{isLoggedIn ?<Link prefetch href="/data" className={ClassName}>
 					Data
-				</Link>
+				</Link> : ""}
 				<Link prefetch href="/about" className={ClassName}>
 					About
 				</Link>

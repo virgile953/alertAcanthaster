@@ -3,12 +3,14 @@ import { getUser } from "./app/actions/auth";
 
 export async function middleware(request: Request) {
 	const user = await getUser();
-	console.log("User:", user);
-	if (
-		!user &&
-		!request.url.includes("/login") &&
-		!request.url.includes("/register")
-	) {
+	const protectedPaths = ["/data", "/settings"];
+
+	// Check if current path is protected
+	const isProtectedPath = protectedPaths.some((path) =>
+		request.url.includes(path)
+	);
+
+	if (!user && isProtectedPath) {
 		return NextResponse.redirect(new URL("/login", request.url));
 	}
 

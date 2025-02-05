@@ -228,3 +228,9 @@ export async function refreshUser() {
 		return { success: false, error: "Failed to refresh data" };
 	}
 }
+
+export async function logout() {
+	const cookieStore = cookies();
+	(await cookieStore).delete("token");
+	return { success: true };
+}
