@@ -9,9 +9,10 @@ export default function Footer() {
       w-full
       md:w-[calc(100%-200px)]
       md:ml-[200px]
+			h-full
       bg-gray-100 dark:bg-gray-800
       p-4
-      mt-auto
+      my-0
       text-sm
       text-gray-600 dark:text-gray-300
       border-t border-gray-200 dark:border-gray-700

@@ -79,11 +79,7 @@ function ClickHandler({ onSightingAdded }: { onSightingAdded: () => void }) {
 	) : null;
 }
 
-export default function MapComponent({
-	position,
-}: {
-	position: [number, number];
-}) {
+export default function MapComponent({ position }: { position: [number, number] }) {
 	const [sightings, setSightings] = useState<Sighting[]>([]);
 	const [refresh, setRefresh] = useState(0);
 
@@ -99,13 +95,12 @@ export default function MapComponent({
 		setRefresh((prev) => prev + 1); // Trigger reload
 	};
 
-	return (//min-h-[calc(100vh-64px)]
-		<div className="h-[calc(79vh)] md:h-[calc(90vh)] w-full">
+	return (
+		<div className="h-full w-full">
 			<MapContainer
 				center={position}
 				zoom={13}
-				className="w-full h-full rounded-lg border-2 border-gray-200 dark:border-gray-700"
-				style={{ height: '100%' }}
+				className="w-full h-full "
 			>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 				{sightings.map((sighting) => (
@@ -121,4 +116,3 @@ export default function MapComponent({
 		</div>
 	);
 }
-

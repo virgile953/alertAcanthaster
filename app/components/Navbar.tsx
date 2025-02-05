@@ -8,25 +8,34 @@ export default function Navbar() {
 	return (
 		<nav
 			className="
-					md:w-[200px] md:h-screen md:fixed
+					md:w-[200px] md:h-screen
 					w-full h-auto fixed top-0
 					bg-gray-100 dark:bg-gray-800
 					p-5
-					mb-4 md:mb-0
-					flex md:flex-col flex-row
+					flex md:flex-col place-content-between flex-row
 					gap-3 items-center md:items-start
 					z-10
 					"
 		>
-			<Link href="/" className={ClassName}>
-				Home
-			</Link>
-			<Link href="/data" className={ClassName}>
-				Data
-			</Link>
-			<Link href="/about" className={ClassName}>
-				About
-			</Link>
+			<div className="flex flex-row md:flex-col gap-1 sm:gap-2 md:gap-3 w-1/2 md:w-full">
+				<Link href="/" className={ClassName}>
+					Home
+				</Link>
+				<Link href="/data" className={ClassName}>
+					Data
+				</Link>
+				<Link href="/about" className={ClassName}>
+					About
+				</Link>
+			</div>
+			<div className="flex flex-row md:flex-col gap-1 sm:gap-3 w-1/2 md:w-full md:mb-8">
+				<Link href="/login" className={ClassName}>
+					Login
+				</Link>
+				<Link href="/register" className={ClassName}>
+					Register
+				</Link>
+			</div>
 		</nav>
 	);
 }

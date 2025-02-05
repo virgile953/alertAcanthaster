@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 
 const MapComponent = dynamic(() => import("./components/MapComponent"), {
-	loading: () => <p>Loading Map...</p>,
+	loading: () => <p className="h-full w-full bg-white">Loading Map...</p>,
 	ssr: false,
 });
 
@@ -14,15 +14,6 @@ export default function Home() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		// Set CSS variable for viewport height on mount and resize
-		const setVH = () => {
-			const vh = window.innerHeight * 0.01;
-			document.documentElement.style.setProperty("--vh", `${vh}px`);
-		};
-
-		setVH();
-		window.addEventListener("resize", setVH);
-
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition(
 				(pos) => {
@@ -30,7 +21,6 @@ export default function Home() {
 					setIsLoading(false);
 				},
 				() => {
-					// Default position if geolocation fails
 					setPosition([51.505, -0.09]);
 					setIsLoading(false);
 				}
@@ -38,24 +28,18 @@ export default function Home() {
 		} else {
 			setIsLoading(false);
 		}
-
-		return () => window.removeEventListener("resize", setVH);
 	}, []);
 
 	return (
-		<div className="flex flex-col md:flex-row">
-			{/* Navbar always loads first */}
+		<div className="flex gap-0 flex-col md:flex-row min-h-[calc(100vh-89px)] md:min-h-[calc(100vh-53px)] overflow-hidden">
 			<Navbar />
-
-			{/* Main content area */}
-			<main className="flex-1 flex flex-col p-2 md:p-4 md:ml-[200px] mt-[90px] md:mt-0">
-				<div
-					className="flex-1 w-full h-[calc(79vh)] md:h-[calc(79vh)] bg-gray-100 dark:bg-gray-800"
-				>
-					{/* Show loading state or map */}
+			<main className="flex-1 flex flex-col gap-0 p-0 md:p-0 md:ml-[200px] mt-[80px] md:mt-0">
+				<div className="flex-1 w-full h-[calc(100% - 52px)] bg-gray-100 dark:bg-gray-800">
 					{isLoading ? (
-						<div className="flex-1 w-full h-[calc(79vh)] md:h-full">
-							<p>Loading map...</p>
+						<div className="h-full w-full">
+							<div className="h-full w-full bg-gray-100 dark:bg-gray-800 animate-pulse rounded-lg border-2 border-gray-200 dark:border-gray-700">
+								<div className="h-full w-full bg-gradient-to-r from-transparent via-gray-200/10 dark:via-gray-700/10 to-transparent animate-shimmer"></div>
+							</div>
 						</div>
 					) : (
 						<MapComponent position={position} />
